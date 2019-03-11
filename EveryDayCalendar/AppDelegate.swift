@@ -12,13 +12,16 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var calendarViewController: CalendarViewController?
 
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         AppearanceManager.setupAppearance()
+        let calendarViewController = CalendarViewController()
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = UINavigationController(rootViewController: CalendarViewController())
+        window?.rootViewController = UINavigationController(rootViewController: calendarViewController)
         window?.makeKeyAndVisible()
+        self.calendarViewController = calendarViewController
         return true
     }
 
@@ -29,6 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
+        calendarViewController?.refreshView()
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {

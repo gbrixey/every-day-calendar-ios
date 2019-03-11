@@ -10,6 +10,13 @@ import UIKit
 
 final class CalendarViewController: UIViewController {
 
+    // MARK: - Public
+
+    func refreshView() {
+        contentStackView.arrangedSubviews.forEach({ $0.removeFromSuperview() })
+        createDateButtons()
+    }
+
     // MARK: - Overrides
 
     override func viewDidLoad() {
