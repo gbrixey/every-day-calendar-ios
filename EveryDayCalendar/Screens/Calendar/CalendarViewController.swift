@@ -15,6 +15,8 @@ final class CalendarViewController: UIViewController {
     func refreshView() {
         contentStackView.arrangedSubviews.forEach({ $0.removeFromSuperview() })
         createDateButtons()
+        view.layoutIfNeeded()
+        scrollToPresentDate()
     }
 
     // MARK: - Overrides
@@ -24,6 +26,11 @@ final class CalendarViewController: UIViewController {
         navigationItem.title = "\(currentYear)"
         scrollView.contentInsetAdjustmentBehavior = .always
         createDateButtons()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        scrollToPresentDate()
     }
 
     // MARK: - Actions
@@ -91,6 +98,21 @@ final class CalendarViewController: UIViewController {
             return 31
         }
     }
+
+    private func scrollToPresentDate() {
+        let calendar = Calendar.current
+        let currentDay = calendar.component(.day, from: Date())
+        let firstMonthStackView = contentStackView.arrangedSubviews.first as! UIStackView
+        let currentDayMidY = firstMonthStackView.arrangedSubviews[currentDay - 1].frame.midY
+        let safeArea = scrollView.safeAreaInsets
+        let scrollViewMidY = ((scrollView.frame.height - safeArea.bottom) + safeArea.top) / 2
+        let minContentOffsetY: CGFloat = 0
+        let maxContentOffsetY = scrollView.contentSize.height + safeArea.top + safeArea.bottom - scrollView.frame.height
+        let contentOffsetY = min(maxContentOffsetY, max(minContentOffsetY, currentDayMidY - scrollViewMidY))
+        scrollView.setContentOffset(CGPoint(x: 0, y: contentOffsetY), animated: true)
+    }
+
+    // MARK: - Private - UserDefaults
 
     private func loadFilledDates() -> Set<String> {
         let year = UserDefaults.standard.integer(forKey: UserDefaultsKeys.year)
