@@ -13,6 +13,7 @@ final class CalendarViewController: UIViewController {
     // MARK: - Public
 
     func refreshView() {
+        dateControls.removeAll()
         contentStackView.arrangedSubviews.forEach({ $0.removeFromSuperview() })
         createDateButtons()
         view.layoutIfNeeded()
@@ -33,6 +34,11 @@ final class CalendarViewController: UIViewController {
         scrollToPresentDate()
     }
 
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        super.motionEnded(motion, with: event)
+        showResetAlert()
+    }
+
     // MARK: - Actions
 
     @objc private func dateControlTapped(_ dateControl: CalendarDateControl) {
@@ -50,6 +56,7 @@ final class CalendarViewController: UIViewController {
 
     @IBOutlet private var scrollView: UIScrollView!
     @IBOutlet private var contentStackView: UIStackView!
+    private var dateControls: [CalendarDateControl] = []
 
     private enum UserDefaultsKeys {
         static let year = "year"
@@ -74,6 +81,7 @@ final class CalendarViewController: UIViewController {
             let daysInMonth = self.daysInMonth(month: month, year: currentYear)
             for day in 1...daysInMonth {
                 let dateControl = createDateControl(month: month, day: day)
+                dateControls.append(dateControl)
                 monthStackView.addArrangedSubview(dateControl)
             }
             contentStackView.addArrangedSubview(monthStackView)
@@ -110,6 +118,21 @@ final class CalendarViewController: UIViewController {
         let maxContentOffsetY = scrollView.contentSize.height + safeArea.top + safeArea.bottom - scrollView.frame.height
         let contentOffsetY = min(maxContentOffsetY, max(minContentOffsetY, currentDayMidY - scrollViewMidY))
         scrollView.setContentOffset(CGPoint(x: 0, y: contentOffsetY), animated: true)
+    }
+
+    private func showResetAlert() {
+        let alert = UIAlertController(title: "Reset?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { [weak self] _ in
+            self?.resetFilledDates()
+        }))
+        present(alert, animated: true, completion: nil)
+    }
+
+    private func resetFilledDates() {
+        filledDates.removeAll()
+        saveFilledDates()
+        dateControls.forEach { $0.isFilled = false }
     }
 
     // MARK: - Private - UserDefaults
