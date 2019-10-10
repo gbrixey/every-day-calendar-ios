@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  EveryDayCalendar
-//
-//  Created by Glen Brixey on 3/8/19.
-//  Copyright © 2019 Glen Brixey. All rights reserved.
-//
-
 import UIKit
 
 @UIApplicationMain
@@ -16,10 +8,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        AppearanceManager.setupAppearance()
         let calendarViewController = CalendarViewController()
+        let navigationController = UINavigationController(rootViewController: calendarViewController)
+        navigationController.navigationBar.standardAppearance = AppearanceManager.navBarAppearance
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = UINavigationController(rootViewController: calendarViewController)
+        window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         self.calendarViewController = calendarViewController
         return true

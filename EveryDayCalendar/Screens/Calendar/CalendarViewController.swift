@@ -1,11 +1,3 @@
-//
-//  CalendarViewController.swift
-//  EveryDayCalendar
-//
-//  Created by Glen Brixey on 3/8/19.
-//  Copyright © 2019 Glen Brixey. All rights reserved.
-//
-
 import UIKit
 
 final class CalendarViewController: UIViewController {
